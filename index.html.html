@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>אריאל ברונק - מיינדפולנס וחמודה</title>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Heebo', sans-serif;
+            background: linear-gradient(135deg, #f5f5f0 0%, #e8e8e0 50%, #d4d4c8 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 35px,
+                    rgba(160, 160, 150, 0.03) 35px,
+                    rgba(160, 160, 150, 0.03) 70px
+                ),
+                repeating-linear-gradient(
+                    -45deg,
+                    transparent,
+                    transparent 50px,
+                    rgba(140, 140, 130, 0.02) 50px,
+                    rgba(140, 140, 130, 0.02) 100px
+                );
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 2;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            display: none;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .header-text {
+            text-align: right;
+        }
+
+        .mindfulness-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(145deg, #e8e8e0 0%, #d4d4c8 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            box-shadow: 
+                0 8px 25px rgba(0,0,0,0.1),
+                inset 0 2px 4px rgba(255,255,255,0.8);
+            border: 3px solid rgba(255,255,255,0.6);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: #3d3d3b;
+            margin-bottom: 10px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .header h1 .icon-inline {
+            font-size: 2.5rem;
+        }
+
+        .header p {
+            color: #5a5a58;
+            font-size: 1.1rem;
+        }
+
+        .edit-section {
+            transition: all 0.5s ease;
+            overflow: hidden;
+            display: none;
+        }
+
+        .edit-section.active {
+            display: block;
+        }
+
+        .input-section {
+            background: linear-gradient(145deg, #fafaf8 0%, #f0f0ec 100%);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 
+                0 4px 20px rgba(0,0,0,0.05),
+                0 1px 3px rgba(0,0,0,0.02),
+                inset 0 1px 0 rgba(255,255,255,0.8);
+            border: 1px solid rgba(200,200,190,0.3);
+            margin-bottom: 40px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .url-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid rgba(180,180,170,0.3);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: 'Heebo', sans-serif;
+            background: white;
+            color: #3d3d3b;
+            transition: all 0.3s ease;
+        }
+
+        .url-input:focus {
+            outline: none;
+            border-color: #9a9a92;
+            box-shadow: 0 0 0 3px rgba(154,154,146,0.1);
+        }
+
+        .url-input::placeholder {
+            color: #9a9a92;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            background: linear-gradient(145deg, #3d3d3b 0%, #2d2d2b 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: 'Heebo', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(145deg, #e8e8e0 0%, #dcdcd4 100%);
+            color: #3d3d3b;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .btn-success {
+            background: linear-gradient(145deg, #48bb78 0%, #38a169 100%);
+            color: white;
+        }
+
+        .btn-success:hover {
+            box-shadow: 0 6px 20px rgba(72,187,120,0.4);
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+        }
+
+        .error-message {
+            color: #e53e3e;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            display: none;
+            padding: 10px;
+            background: rgba(229, 62, 62, 0.1);
+            border-radius: 8px;
+        }
+
+        .video-result {
+            background: linear-gradient(145deg, #fafaf8 0%, #f0f0ec 100%);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 
+                0 4px 20px rgba(0,0,0,0.05),
+                0 1px 3px rgba(0,0,0,0.02),
+                inset 0 1px 0 rgba(255,255,255,0.8);
+            border: 1px solid rgba(200,200,190,0.3);
+            display: none;
+            animation: fadeInUp 0.5s ease;
+            margin-bottom: 30px;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            max-width: 400px;
+            height: 225px;
+            object-fit: cover;
+            border-radius: 16px;
+            margin: 0 auto 25px;
+            display: block;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .title-edit-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .video-title {
+            font-size: 1.3rem;
+            color: #3d3d3b;
+            font-weight: 700;
+            text-align: center;
+            line-height: 1.4;
+            display: none;
+        }
+
+        .video-title-input {
+            font-size: 1.3rem;
+            color: #3d3d3b;
+            font-weight: 700;
+            text-align: center;
+            padding: 10px 15px;
+            border: 2px solid rgba(180,180,170,0.3);
+            border-radius: 10px;
+            font-family: 'Heebo', sans-serif;
+            background: white;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .video-title-input:focus {
+            outline: none;
+            border-color: #9a9a92;
+        }
+
+        .video-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .finish-section {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+        }
+
+        .view-mode-header {
+            display: block;
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        .view-mode-header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .view-mode-header h2 {
+            font-size: 2rem;
+            color: #3d3d3b;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .view-mode-header .mindfulness-small {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(145deg, #e8e8e0 0%, #d4d4c8 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 
+                0 4px 15px rgba(0,0,0,0.1),
+                inset 0 2px 4px rgba(255,255,255,0.8);
+            border: 2px solid rgba(255,255,255,0.6);
+        }
+
+        .saved-videos {
+            margin-top: 30px;
+            padding-bottom: 80px;
+        }
+
+        .videos-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .videos-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .videos-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .videos-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .video-card {
+            background: linear-gradient(145deg, #fafaf8 0%, #f0f0ec 100%);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 
+                0 4px 15px rgba(0,0,0,0.05),
+                0 1px 3px rgba(0,0,0,0.02);
+            border: 1px solid rgba(200,200,190,0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .video-card img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        .video-card-content {
+            padding: 15px;
+            background: linear-gradient(145deg, #fafaf8 0%, #f0f0ec 100%);
+        }
+
+        .video-card-title {
+            font-size: 0.9rem;
+            color: #3d3d3b;
+            font-weight: 600;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: rgba(255,255,255,0.95);
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .video-card:hover .delete-btn {
+            opacity: 1;
+        }
+
+        .delete-btn:hover {
+            background: #fee;
+            transform: scale(1.1);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9a5a58;
+            display: none;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(180,180,170,0.3);
+            border-top-color: #3d3d3b;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .manual-input {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 12px;
+            display: none;
+        }
+
+        .manual-input input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(180,180,170,0.3);
+            border-radius: 8px;
+            font-family: 'Heebo', sans-serif;
+        }
+
+        .back-to-edit-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(255,255,255,0.9);
+            border: 1px solid rgba(180,180,170,0.3);
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 0.8rem;
+            color: #5a5a58;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            font-family: 'Heebo', sans-serif;
+            display: block;
+        }
+
+        .back-to-edit-btn:hover {
+            background: white;
+            color: #3d3d3b;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        @media (max-width: 600px) {
+            .input-group {
+                flex-direction: column;
+            }
+            
+            .video-thumbnail {
+                height: 180px;
+            }
+            
+            .view-mode-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .mindfulness-small {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+
+            .title-edit-container {
+                flex-direction: column;
+            }
+
+            .video-title-input {
+                font-size: 1.1rem;
+            }
+
+            .back-to-edit-btn {
+                bottom: 10px;
+                right: 10px;
+                padding: 6px 12px;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- מצב עריכה - מוסתר כברירת מחדל -->
+        <div class="header" id="mainHeader">
+            <div class="header-content">
+                <div class="header-text">
+                    <h1>
+                        אריאל ברונק - מיינדפולנס וחמודה
+                        <span class="icon-inline">🧘‍♂️</span>
+                    </h1>
+                    <p>הזן קישור לסרטון, ערוך את הכותרת ושמור - עד 4 סרטונים בשורה</p>
+                </div>
+                <div class="mindfulness-icon">🧘‍♂️</div>
+            </div>
+        </div>
+
+        <div class="edit-section" id="editSection">
+            <div class="input-section">
+                <div class="input-group">
+                    <input 
+                        type="text" 
+                        class="url-input" 
+                        id="videoUrl" 
+                        placeholder="הדבק כאן את הקישור לסרטון YouTube..."
+                    >
+                    <button class="btn" onclick="fetchVideoInfo()">הצג סרטון</button>
+                </div>
+                <div class="error-message" id="errorMsg"></div>
+                
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 15px; color: #5a5a58;">טוען פרטי סרטון...</p>
+                </div>
+
+                <div class="manual-input" id="manualInput">
+                    <p style="margin-bottom: 10px; color: #5a5a58;">לא ניתן לטעון את הכותרת אוטומטית. הזן ידנית:</p>
+                    <input type="text" id="manualTitle" placeholder="הזן כותרת לסרטון...">
+                    <button class="btn" onclick="useManualTitle()">השתמש בכותרת זו</button>
+                </div>
+            </div>
+
+            <div class="video-result" id="videoResult">
+                <img class="video-thumbnail" id="thumbnail" src="" alt="תמונת סרטון">
+                
+                <div class="title-edit-container">
+                    <input type="text" class="video-title-input" id="videoTitleInput" placeholder="הזן כותרת לסרטון...">
+                    <button class="btn btn-secondary btn-small" onclick="toggleEditTitle()" id="editBtn">✏️ ערוך</button>
+                </div>
+                
+                <h3 class="video-title" id="videoTitleDisplay"></h3>
+                
+                <div class="video-actions">
+                    <button class="btn" onclick="saveVideo()">💾 שמור ברשימה</button>
+                    <button class="btn btn-secondary" onclick="clearResult()">🗑️ נקה</button>
+                    <a class="btn" id="watchLink" href="" target="_blank" style="text-decoration: none;">▶️ צפה ביוטיוב</a>
+                </div>
+            </div>
+
+            <div class="finish-section" id="finishSection" style="display: none;">
+                <button class="btn btn-success btn-large" onclick="showViewMode()">
+                    ✓ סיים וצפה בסרטונים
+                </button>
+                <p style="margin-top: 15px; color: #5a5a58; font-size: 0.9rem;">
+                    לחץ כאשר סיימת להוסיף את כל הסרטונים
+                </p>
+            </div>
+        </div>
+
+        <!-- מצב צפייה - ברירת מחדל -->
+        <div class="view-mode-header" id="viewModeHeader">
+            <div class="view-mode-header-content">
+                <h2>
+                    <div class="mindfulness-small">🧘‍♂️</div>
+                    אריאל ברונק - מיינדפולנס וחמודה
+                </h2>
+            </div>
+        </div>
+
+        <div class="saved-videos" id="savedVideos">
+            <div class="videos-grid" id="videosGrid"></div>
+        </div>
+
+        <div class="empty-state" id="emptyState">
+            <div class="empty-state-icon">🎥</div>
+            <p>אין סרטונים שמורים. לחץ על הכפתור למטה כדי להוסיף סרטונים.</p>
+        </div>
+    </div>
+
+    <button class="back-to-edit-btn" id="backToEditBtn" onclick="showEditMode()">
+        ➕ הוסף סרטונים
+    </button>
+
+    <script>
+        let currentVideo = null;
+        let savedVideosList = JSON.parse(localStorage.getItem('youtubeVideos') || '[]');
+        let isEditing = false;
+
+        window.onload = function() {
+            renderSavedVideos();
+        };
+
+        function extractVideoId(url) {
+            const patterns = [
+                /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\s?]+)/,
+                /youtube\.com\/watch\?.*v=([^&\s]+)/,
+                /youtu\.be\/([^&\s]+)/,
+                /youtube\.com\/shorts\/([^&\s?]+)/
+            ];
+            
+            for (let pattern of patterns) {
+                const match = url.match(pattern);
+                if (match) return match[1];
+            }
+            return null;
+        }
+
+        async function fetchVideoInfo() {
+            const url = document.getElementById('videoUrl').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('videoResult');
+            const manualInput = document.getElementById('manualInput');
+            
+            errorMsg.style.display = 'none';
+            result.style.display = 'none';
+            manualInput.style.display = 'none';
+            
+            const videoId = extractVideoId(url);
+            
+            if (!videoId) {
+                errorMsg.textContent = '❌ כתובת ה-URL אינה תקינה. דוגמאות לקישורים תקינים:\n• https://www.youtube.com/watch?v=xxxxx\n• https://youtu.be/xxxxx';
+                errorMsg.style.display = 'block';
+                return;
+            }
+            
+            loading.style.display = 'block';
+            
+            const thumbnailUrls = [
+                `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+                `https://img.youtube.com/vi/${videoId}/sddefault.jpg`,
+                `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+                `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`
+            ];
+            
+            let workingThumbnail = thumbnailUrls[0];
+            
+            currentVideo = {
+                id: videoId,
+                title: 'טוען כותרת...',
+                thumbnail: workingThumbnail,
+                url: `https://www.youtube.com/watch?v=${videoId}`
+            };
+            
+            try {
+                const response = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${videoId}&format=json`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.title) {
+                        currentVideo.title = data.title;
+                    }
+                }
+            } catch (e) {
+                console.log('noembed failed');
+            }
+            
+            if (currentVideo.title === 'טוען כותרת...') {
+                try {
+                    const response = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        currentVideo.title = data.title;
+                    }
+                } catch (e) {
+                    console.log('oembed failed');
+                }
+            }
+            
+            loading.style.display = 'none';
+            
+            if (currentVideo.title === 'טוען כותרת...') {
+                manualInput.style.display = 'block';
+                currentVideo.title = 'סרטון YouTube';
+            }
+            
+            displayVideo();
+            document.getElementById('videoUrl').value = '';
+        }
+
+        function displayVideo() {
+            const result = document.getElementById('videoResult');
+            
+            document.getElementById('thumbnail').src = currentVideo.thumbnail;
+            document.getElementById('thumbnail').onerror = function() {
+                const qualities = ['maxresdefault', 'sddefault', 'hqdefault', 'mqdefault', 'default'];
+                const current = this.src.split('/').pop().replace('.jpg', '');
+                const currentIndex = qualities.indexOf(current);
+                if (currentIndex < qualities.length - 1) {
+                    const videoId = currentVideo.id;
+                    this.src = `https://img.youtube.com/vi/${videoId}/${qualities[currentIndex + 1]}.jpg`;
+                }
+            };
+            
+            document.getElementById('videoTitleInput').value = currentVideo.title;
+            document.getElementById('videoTitleDisplay').textContent = currentVideo.title;
+            document.getElementById('watchLink').href = currentVideo.url;
+            
+            result.style.display = 'block';
+            isEditing = true;
+            updateEditMode();
+        }
+
+        function toggleEditTitle() {
+            isEditing = !isEditing;
+            updateEditMode();
+            
+            if (!isEditing) {
+                const newTitle = document.getElementById('videoTitleInput').value.trim();
+                if (newTitle) {
+                    currentVideo.title = newTitle;
+                    document.getElementById('videoTitleDisplay').textContent = newTitle;
+                }
+            }
+        }
+
+        function updateEditMode() {
+            const input = document.getElementById('videoTitleInput');
+            const display = document.getElementById('videoTitleDisplay');
+            const btn = document.getElementById('editBtn');
+            
+            if (isEditing) {
+                input.style.display = 'block';
+                display.style.display = 'none';
+                btn.textContent = '✓ סיים עריכה';
+            } else {
+                input.style.display = 'none';
+                display.style.display = 'block';
+                btn.textContent = '✏️ ערוך';
+            }
+        }
+
+        function useManualTitle() {
+            const manualTitle = document.getElementById('manualTitle').value.trim();
+            if (manualTitle) {
+                currentVideo.title = manualTitle;
+                document.getElementById('videoTitleInput').value = manualTitle;
+                document.getElementById('videoTitleDisplay').textContent = manualTitle;
+                document.getElementById('manualInput').style.display = 'none';
+            }
+        }
+
+        function saveVideo() {
+            if (!currentVideo) return;
+            
+            if (isEditing) {
+                const newTitle = document.getElementById('videoTitleInput').value.trim();
+                if (newTitle) {
+                    currentVideo.title = newTitle;
+                }
+            }
+            
+            const exists = savedVideosList.some(v => v.id === currentVideo.id);
+            if (exists) {
+                alert('⚠️ הסרטון כבר קיים ברשימה!');
+                return;
+            }
+            
+            savedVideosList.push({...currentVideo});
+            localStorage.setItem('youtubeVideos', JSON.stringify(savedVideosList));
+            
+            renderSavedVideos();
+            clearResult();
+            document.getElementById('finishSection').style.display = 'block';
+            alert('✅ הסרטון נשמר בהצלחה!');
+        }
+
+        function renderSavedVideos() {
+            const grid = document.getElementById('videosGrid');
+            const savedSection = document.getElementById('savedVideos');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (savedVideosList.length === 0) {
+                savedSection.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            savedSection.style.display = 'block';
+            emptyState.style.display = 'none';
+            
+            grid.innerHTML = savedVideosList.map((video, index) => `
+                <div class="video-card" onclick="playVideo('${video.id}')">
+                    <img src="${video.thumbnail}" 
+                         onerror="this.src='https://img.youtube.com/vi/${video.id}/hqdefault.jpg'" 
+                         alt="${video.title}">
+                    <div class="video-card-content">
+                        <div class="video-card-title">${video.title}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function playVideo(videoId) {
+            const video = savedVideosList.find(v => v.id === videoId);
+            if (video) {
+                window.open(video.url, '_blank');
+            }
+        }
+
+        function showViewMode() {
+            document.getElementById('editSection').classList.remove('active');
+            document.getElementById('mainHeader').style.display = 'none';
+            document.getElementById('viewModeHeader').style.display = 'block';
+            document.getElementById('backToEditBtn').style.display = 'block';
+            document.getElementById('backToEditBtn').textContent = '➕ הוסף סרטונים';
+            renderSavedVideos();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showEditMode() {
+            document.getElementById('editSection').classList.add('active');
+            document.getElementById('mainHeader').style.display = 'block';
+            document.getElementById('viewModeHeader').style.display = 'none';
+            document.getElementById('backToEditBtn').style.display = 'none';
+            renderSavedVideos();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function clearResult() {
+            document.getElementById('videoResult').style.display = 'none';
+            document.getElementById('manualInput').style.display = 'none';
+            currentVideo = null;
+            isEditing = false;
+        }
+
+        document.getElementById('videoUrl').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                fetchVideoInfo();
+            }
+        });
+
+        document.getElementById('manualTitle').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                useManualTitle();
+            }
+        });
+
+        document.getElementById('videoTitleInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                toggleEditTitle();
+            }
+        });
+    </script>
+</body>
+</html>
