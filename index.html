@@ -422,34 +422,6 @@
             text-align: center;
         }
 
-        .delete-btn {
-            position: absolute;
-            top: 8px;
-            left: 8px;
-            background: rgba(255,255,255,0.95);
-            border: none;
-            border-radius: 50%;
-            width: 28px;
-            height: 28px;
-            cursor: pointer;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        }
-
-        .video-card:hover .delete-btn {
-            opacity: 1;
-        }
-
-        .delete-btn:hover {
-            background: #fee;
-            transform: scale(1.1);
-        }
-
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -508,8 +480,8 @@
             background: rgba(255,255,255,0.9);
             border: 1px solid rgba(180,180,170,0.3);
             border-radius: 8px;
-            padding: 8px 16px;
-            font-size: 0.8rem;
+            padding: 10px 20px;
+            font-size: 0.9rem;
             color: #5a5a58;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -522,6 +494,90 @@
             background: white;
             color: #3d3d3b;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: linear-gradient(145deg, #fafaf8 0%, #f0f0ec 100%);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            animation: modalIn 0.3s ease;
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal h3 {
+            font-size: 1.5rem;
+            color: #3d3d3b;
+            margin-bottom: 10px;
+        }
+
+        .modal p {
+            color: #5a5a58;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid rgba(180,180,170,0.3);
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-family: 'Heebo', sans-serif;
+            text-align: center;
+            letter-spacing: 8px;
+            margin-bottom: 20px;
+            background: white;
+        }
+
+        .modal-input:focus {
+            outline: none;
+            border-color: #9a9a92;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .modal-error {
+            color: #e53e3e;
+            font-size: 0.9rem;
+            margin-top: 15px;
+            display: none;
         }
 
         @media (max-width: 600px) {
@@ -554,8 +610,12 @@
             .back-to-edit-btn {
                 bottom: 10px;
                 right: 10px;
-                padding: 6px 12px;
-                font-size: 0.75rem;
+                padding: 8px 16px;
+                font-size: 0.8rem;
+            }
+
+            .modal {
+                padding: 30px 20px;
             }
         }
     </style>
@@ -620,11 +680,8 @@
 
             <div class="finish-section" id="finishSection" style="display: none;">
                 <button class="btn btn-success btn-large" onclick="showViewMode()">
-                    ✓ סיים וצפה בסרטונים
+                    ✓ סיים וחזור לצפייה
                 </button>
-                <p style="margin-top: 15px; color: #5a5a58; font-size: 0.9rem;">
-                    לחץ כאשר סיימת להוסיף את כל הסרטונים
-                </p>
             </div>
         </div>
 
@@ -648,18 +705,90 @@
         </div>
     </div>
 
-    <button class="back-to-edit-btn" id="backToEditBtn" onclick="showEditMode()">
+    <button class="back-to-edit-btn" id="backToEditBtn" onclick="openPasswordModal()">
         ➕ הוסף סרטונים
     </button>
 
+    <!-- Password Modal -->
+    <div class="modal-overlay" id="passwordModal">
+        <div class="modal">
+            <h3>🔒 כניסת מנהל</h3>
+            <p>הזן את הסיסמה כדי לערוך את הדף</p>
+            <input 
+                type="password" 
+                class="modal-input" 
+                id="passwordInput" 
+                placeholder="••••"
+                maxlength="4"
+            >
+            <div class="modal-buttons">
+                <button class="btn" onclick="checkPassword()">כניסה</button>
+                <button class="btn btn-secondary" onclick="closePasswordModal()">ביטול</button>
+            </div>
+            <div class="modal-error" id="modalError">❌ סיסמה שגויה</div>
+        </div>
+    </div>
+
     <script>
+        const CORRECT_PASSWORD = '3699';
+        const STORAGE_KEY = 'ariel_videos';
         let currentVideo = null;
-        let savedVideosList = JSON.parse(localStorage.getItem('youtubeVideos') || '[]');
+        let savedVideosList = [];
         let isEditing = false;
 
+        // Load videos from localStorage on page load
         window.onload = function() {
+            loadVideosFromStorage();
             renderSavedVideos();
         };
+
+        function loadVideosFromStorage() {
+            try {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                if (stored) {
+                    savedVideosList = JSON.parse(stored);
+                    console.log('Loaded videos:', savedVideosList.length);
+                } else {
+                    savedVideosList = [];
+                }
+            } catch (e) {
+                console.error('Error loading from localStorage:', e);
+                savedVideosList = [];
+            }
+        }
+
+        function saveVideosToStorage() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(savedVideosList));
+                console.log('Saved videos:', savedVideosList.length);
+            } catch (e) {
+                console.error('Error saving to localStorage:', e);
+                alert('⚠️ שגיאה בשמירת הסרטונים. ייתכן שהאחסון מלא.');
+            }
+        }
+
+        function openPasswordModal() {
+            document.getElementById('passwordModal').classList.add('active');
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('modalError').style.display = 'none';
+            setTimeout(() => document.getElementById('passwordInput').focus(), 100);
+        }
+
+        function closePasswordModal() {
+            document.getElementById('passwordModal').classList.remove('active');
+        }
+
+        function checkPassword() {
+            const input = document.getElementById('passwordInput').value;
+            if (input === CORRECT_PASSWORD) {
+                closePasswordModal();
+                showEditMode();
+            } else {
+                document.getElementById('modalError').style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('passwordInput').focus();
+            }
+        }
 
         function extractVideoId(url) {
             const patterns = [
@@ -827,7 +956,7 @@
             }
             
             savedVideosList.push({...currentVideo});
-            localStorage.setItem('youtubeVideos', JSON.stringify(savedVideosList));
+            saveVideosToStorage(); // Save to localStorage
             
             renderSavedVideos();
             clearResult();
@@ -873,7 +1002,6 @@
             document.getElementById('mainHeader').style.display = 'none';
             document.getElementById('viewModeHeader').style.display = 'block';
             document.getElementById('backToEditBtn').style.display = 'block';
-            document.getElementById('backToEditBtn').textContent = '➕ הוסף סרטונים';
             renderSavedVideos();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -894,6 +1022,7 @@
             isEditing = false;
         }
 
+        // Event Listeners
         document.getElementById('videoUrl').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 fetchVideoInfo();
@@ -909,6 +1038,19 @@
         document.getElementById('videoTitleInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 toggleEditTitle();
+            }
+        });
+
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+
+        // Close modal on overlay click
+        document.getElementById('passwordModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePasswordModal();
             }
         });
     </script>
